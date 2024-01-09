@@ -123,12 +123,16 @@ class MQTTClientWrapper extends ChangeNotifier {
   }
 
   void publishMessage(String message, String topic) {
-    final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
-    builder.addString(message);
+    if (mqttIsConnected) {
+      final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
+      builder.addString(message);
 
-    log('Publishing message "$message" to topic $topic');
+      log('Publishing message "$message" to topic $topic');
 
-    client.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+      client.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+    } else {
+      log("Cliente desconectado");
+    }
   }
 
   // Método para desuscribirse de todos los tópicos
@@ -188,11 +192,11 @@ class MQTTClientWrapper extends ChangeNotifier {
       var message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-      /*if (c[0].topic == 'Value') listaValueMensajes.add(message);
+      //if (c[0].topic == 'Value') listaValueMensajes.add(message);
       if (c[0].topic == 'videoFrame') {
         lastVideoFrame = message;
         notifyListeners();
-      }*/
+      }
 
       log('YOU GOT A NEW MESSAGE:');
       log(message);

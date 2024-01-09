@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:dronestream/services/mqtt_client.dart';
 import 'package:dronestream/utils/my_button.dart';
@@ -16,6 +18,8 @@ class _MainPageState extends State<MainPage> {
   late TextEditingController textController;
   late Size size;
   bool isConnected = false;
+  Uint8List? backgroundImage;
+  int sendornot = 0;
 
   @override
   void initState() {
@@ -27,6 +31,12 @@ class _MainPageState extends State<MainPage> {
   void dispose() {
     textController.dispose();
     super.dispose();
+  }
+
+  Uint8List decodeAndShow(String frame) {
+    Uint8List image = base64Decode(frame);
+    backgroundImage = image;
+    return image;
   }
 
   @override
@@ -82,6 +92,15 @@ class _MainPageState extends State<MainPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
+                      onLongPress: () {
+                        if (sendornot == 0) {
+                          mqttclient.publishMessage("", "StartVideoStream");
+                          sendornot = 1;
+                        } else {
+                          mqttclient.publishMessage("", "StopVideoStream");
+                          sendornot = 0;
+                        }
+                      },
                       onPressed: () async {
                         if (mqttclient.mqttIsConnected == false) {
                           await mqttclient.connectMqttClient();
@@ -121,7 +140,7 @@ class _MainPageState extends State<MainPage> {
                                     mqttclient.subscribeToTopic(value);
                                     textController.clear();
                                   }
-                                }, //AÑADIR FUNCION
+                                },
                                 onTapOutside: (event) {
                                   FocusScope.of(context)
                                       .unfocus(); //Un-selects textfield when tapping outside
@@ -149,11 +168,27 @@ class _MainPageState extends State<MainPage> {
                       constraints: BoxConstraints(maxWidth: size.width),
                       child: AspectRatio(
                         aspectRatio: 4 / 3,
-                        child: Container(
-                          color: Colors.grey,
-                          alignment: Alignment.center,
-                          child: Text(
-                              "Altura: ${size.height}\nAncho: ${size.width}"),
+                        child: Stack(
+                          children: [
+                            Container(
+                              color: Colors.grey[300],
+                            ),
+                            if (mqttclient.mqttIsConnected == false)
+                              const Center(
+                                child: Text("Cliente desconectado"),
+                              ),
+                            if (backgroundImage != null)
+                              Image.memory(
+                                backgroundImage!,
+                                fit: BoxFit.cover,
+                              ),
+                            //),
+                            if (mqttclient.lastVideoFrame.isNotEmpty)
+                              Image.memory(
+                                decodeAndShow(mqttclient.lastVideoFrame),
+                                fit: BoxFit.cover,
+                              ),
+                          ],
                         ),
                       ),
                     ),
