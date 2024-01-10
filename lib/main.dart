@@ -1,9 +1,10 @@
-import 'package:dronestream/pages/main_page.dart';
+import 'package:dronestream/pages/alternative_main_page.dart';
 import 'package:dronestream/services/mqtt_client.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  //debugRepaintRainbowEnabled = true;
   runApp(const MyApp());
 }
 
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
         //showPerformanceOverlay: true,
         debugShowCheckedModeBanner: false,
         title: 'DroneStream',
-        home: MainPage(),
+        //home: MainPage(),
+        home: AlternativeMainPage(),
       ),
     );
   }
