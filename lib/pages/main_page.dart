@@ -180,13 +180,17 @@ class _MainPageState extends State<MainPage> {
                             if (backgroundImage != null)
                               Image.memory(
                                 backgroundImage!,
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
+                                width: size.width,
+                                height: size.width,
                               ),
                             //),
                             if (mqttclient.lastVideoFrame.isNotEmpty)
                               Image.memory(
                                 decodeAndShow(mqttclient.lastVideoFrame),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.fill,
+                                width: size.width,
+                                height: size.width,
                               ),
                           ],
                         ),
