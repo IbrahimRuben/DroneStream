@@ -28,5 +28,18 @@ Ejecuta la aplicación con el siguiente comando en la consola:
 flutter run lib/main.dart
 ```
 
-> [!NOTE]
-> Recuerda escoger tu dispositivo 
+> [!IMPORTANT]
+> Recuerda seleccionar el dispositivo en el que desees ejecutar la aplicación.
+
+> [!CAUTION]
+> Esta aplicación está disponible únicamente en Android/iOS.
+
+
+
+# Guía de uso
+
+- El primer paso es ejecutar el archivo _DummyService.py_ para iniciar el cliente externo, ya que este enviará las imágenes.
+- El segundo paso es conectarnos al broker MQTT con el botón "Conectar".
+- Una vez hecho esto, si deseamos que el cliente externo nos envíe contenido, podemos mantener pulsado el botón "Conectar". Esto enviará un mensaje al broker que el _DummyService.py_ interpretará como inicio de la transmisión.
+- Si deseamos detener la transmisión, podemos volver a mantener pulsado el botón "Conectar" para que termine de enviar imágenes.
+- Si deseamos desconectarnos, simplemente pulsamos "Desconectar".
