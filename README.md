@@ -1,14 +1,32 @@
-A new Flutter project.
+# MQTT DroneStream
 
-## Getting Started
+## Descripción
+Esta aplicación utiliza el protocolo MQTT para recibir en tiempo real contenido multimedia desde un cliente externo, simulado en el archivo _DummyService.py_.
 
-This project is a starting point for a Flutter application.
+## Instalación
 
-A few resources to get you started if this is your first Flutter project:
+**Paso 1:**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Descarga o clona este repositorio usando el siguiente enlace:
+```
+https://github.com/IbrahimRuben/dronestream.git
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**Paso 2:**
+
+Ve a la carpeta raíz del proyecto y ejecuta el siguiente comando en la consola para obtener las dependencias necesarias:
+
+```
+flutter pub get
+```
+
+**Paso 3:**
+
+Ejecuta la aplicación con el siguiente comando en la consola:
+
+```
+flutter run lib/main.dart
+```
+
+> [!NOTE]
+> Recuerda escoger tu dispositivo 
