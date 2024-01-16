@@ -1,3 +1,4 @@
+// PÁGINA EN DESUSO -----------------------------------------------------------
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
@@ -142,8 +143,7 @@ class _MainPageState extends State<MainPage> {
                                   }
                                 },
                                 onTapOutside: (event) {
-                                  FocusScope.of(context)
-                                      .unfocus(); //Un-selects textfield when tapping outside
+                                  FocusScope.of(context).unfocus();
                                 },
                               ),
                             ),

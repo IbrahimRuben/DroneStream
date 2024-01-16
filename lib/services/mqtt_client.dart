@@ -1,3 +1,4 @@
+// Importaciones necesarias para el funcionamiento del código
 import 'dart:async';
 import 'dart:developer';
 
@@ -5,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 
-// connection states for easy identification
+// Enumeraciones para los estados de conexión y suscripción MQTT
 enum MqttCurrentConnectionState {
   IDLE,
   CONNECTING,
@@ -16,17 +17,7 @@ enum MqttCurrentConnectionState {
 
 enum MqttSubscriptionState { IDLE, SUBSCRIBED }
 
-/*
-String server = 'ee29acde5e9c4c0aa728e6c098fddfb1.s1.eu.hivemq.cloud';
-String clientIdentifier = 'prueba_flutter';
-int port = 8883;
-
-MqttServerClient client = MqttServerClient.withPort(
-    'broker.emqx.io',
-    'prueba_flutter',
-    1883,
-  );*/
-
+// Clase que envuelve el cliente MQTT y proporciona funcionalidades específicas
 class MQTTClientWrapper extends ChangeNotifier {
   MqttServerClient client = MqttServerClient.withPort(
     'classpip.upc.edu',
@@ -34,54 +25,35 @@ class MQTTClientWrapper extends ChangeNotifier {
     1884,
   );
 
+  // Estados de conexión y suscripción MQTT
   MqttCurrentConnectionState connectionState = MqttCurrentConnectionState.IDLE;
   MqttSubscriptionState subscriptionState = MqttSubscriptionState.IDLE;
 
-  List<String> listaValueMensajes = [];
+  // Variables relacionadas con la conexión MQTT
   bool mqttIsConnected = false;
   List<String> subscribedTopics = [];
   String lastVideoFrame = '';
-  final Completer<void> _subscriptionCompleter = Completer<void>();
-  bool isSubscribedToValue = false;
 
-  /*void initMqtt() {
-    MQTTClientWrapper newclient = MQTTClientWrapper();
-    newclient.prepareMqttClient();
-  }*/
-
-  // using async tasks, so the connection won't hinder the code flow
-  /*void prepareMqttClient() async {
-    _setupMqttClient();
-    await _connectClient();
-    subscribeToTopic('Dart/Mqtt_client/testtopic');
-    publishMessage('MENSAJE_PRUEBA', 'dart/mqtt/parameters');
-  }*/
-
+  // Inicialización del cliente MQTT y conexión
   Future<bool> connectMqttClient() async {
     _setupMqttClient();
     return await _connectClient();
   }
 
+  // Configuración del cliente MQTT
   void _setupMqttClient() {
-    //client = MqttServerClient.withPort('<your_host>', '<your_name>', <your_port>);
-    // the next 2 lines are necessary to connect with tls, which is used by HiveMQ Cloud
-    //client.secure = true;
-    //client.securityContext = SecurityContext.defaultContext;
     client.keepAlivePeriod = 60;
     client.onDisconnected = _onDisconnected;
     client.onConnected = _onConnected;
     client.onSubscribed = _onSubscribed;
-    //client.port = 1884;
-    //client.port = 1883;
   }
 
-  // waiting for the connection, if an error occurs, print it and disconnect
+  // Conectar al cliente MQTT y gestionar estados
   Future<bool> _connectClient() async {
     try {
       log('client connecting....');
       connectionState = MqttCurrentConnectionState.CONNECTING;
       await client.connect('dronsEETAC', 'mimara1456.');
-      //await client.connect();
     } on Exception catch (e) {
       log('client exception - $e');
       connectionState = MqttCurrentConnectionState.ERROR_WHEN_CONNECTING;
@@ -91,7 +63,7 @@ class MQTTClientWrapper extends ChangeNotifier {
       return false;
     }
 
-    // when connected, print a confirmation, else print an error
+    // Cuando nos conectamos, printeamos diferentes resultados
     if (client.connectionStatus!.state == MqttConnectionState.connected) {
       connectionState = MqttCurrentConnectionState.CONNECTED;
       log('client connected');
@@ -108,20 +80,19 @@ class MQTTClientWrapper extends ChangeNotifier {
     }
   }
 
+  // Desconectar el cliente MQTT y desuscribirse de todos los tópicos
   void disconnectMqttClient() {
     unsubscribeFromAllTopics();
     client.disconnect();
   }
 
+  // Suscribirse a un tópico MQTT
   void subscribeToTopic(String topicName) {
     log('Subscribing to the $topicName topic');
     client.subscribe(topicName, MqttQos.atMostOnce);
   }
 
-  Future<void> getSubscriptionFuture() {
-    return _subscriptionCompleter.future;
-  }
-
+  // Publicar un mensaje en un tópico MQTT
   void publishMessage(String message, String topic) {
     if (mqttIsConnected) {
       final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
@@ -151,23 +122,21 @@ class MQTTClientWrapper extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Inicializar el DummyService
   void initDummyService() {
     publishMessage('', 'Connect');
   }
 
-  // callbacks for different events -------------------------------------------
+  // Callbacks para diferentes eventos MQTT -----------------------------------
   void _onSubscribed(String topic) {
     log('Subscription confirmed for topic $topic');
     subscriptionState = MqttSubscriptionState.SUBSCRIBED;
 
+    // Para evitar suscribirse a tópicos ya suscritos
     if (!subscribedTopics.contains(topic)) {
       subscribedTopics.add(topic);
     }
     notifyListeners();
-
-    /*if (topic == 'Value' && !_subscriptionCompleter.isCompleted) {
-      _subscriptionCompleter.complete();
-    }*/
   }
 
   void _onDisconnected() {
@@ -181,18 +150,14 @@ class MQTTClientWrapper extends ChangeNotifier {
     connectionState = MqttCurrentConnectionState.CONNECTED;
     log('OnConnected client callback - Client connection was sucessful');
 
-    //Nos suscribimos a los tópicos necesarios
-    //client.subscribe('writeParameters', MqttQos.atLeastOnce);
-    //client.subscribe('Value', MqttQos.atLeastOnce);
-    //client.subscribe('videoFrame', MqttQos.atLeastOnce);
-
-    // print the message when it is received
+    // Escuchamos las actualizaciones para recibir mensajes
     client.updates!.listen((List<MqttReceivedMessage<MqttMessage>> c) {
       final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
       var message =
           MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-      //if (c[0].topic == 'Value') listaValueMensajes.add(message);
+      //Si se recibe un mensaje en el tópico 'videoFrame', se actualiza el frame
+      // IMPORTANTE CAMBIAR ESTO POR LA VARIABLE DEL TÓPICO
       if (c[0].topic == 'videoFrame') {
         lastVideoFrame = message;
         notifyListeners();

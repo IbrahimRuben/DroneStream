@@ -26,10 +26,11 @@ def SendVideoStream ():
         # Reducing resolution (e.g., to 640x480)
         resized_frame = cv.resize(frame, (320, 240))
 
-        #Check actual resolution
+        # Check actual resolution
         height, width, _ = resized_frame.shape
         print(f"Resolución actual: {width}x{height}")
 
+        # Take a JPG picture
         _, buffer = cv.imencode('.jpg', resized_frame)
         
         # Converting into encoded bytes
