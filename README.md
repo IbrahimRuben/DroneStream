@@ -1,5 +1,8 @@
 # MQTT DroneStream
 
+> [!CAUTION]
+> Esta aplicación está disponible únicamente en Android/iOS.
+
 ## Descripción
 Esta aplicación utiliza el protocolo MQTT para recibir en tiempo real contenido multimedia desde un cliente externo, simulado en el archivo _DummyService.py_.
 
@@ -30,11 +33,6 @@ flutter run lib/main.dart
 
 > [!IMPORTANT]
 > Recuerda seleccionar el dispositivo en el que desees ejecutar la aplicación.
-
-> [!CAUTION]
-> Esta aplicación está disponible únicamente en Android/iOS.
-
-
 
 # Guía de uso
 
