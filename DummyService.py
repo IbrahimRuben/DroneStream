@@ -19,19 +19,22 @@ def SendVideoStream ():
 
     while sendingVideoStream:
         fps = 1/20
+        width = 640
+        height = 480
+        quality = 75
        
         # Read Frame
         _, frame = cap.read()
         
         # Reducing resolution (e.g., to 640x480)
-        resized_frame = cv.resize(frame, (320, 240))
+        resized_frame = cv.resize(frame, (width, height))
 
         # Check actual resolution
-        height, width, _ = resized_frame.shape
+        #height, width, _ = resized_frame.shape
         print(f"Resolución actual: {width}x{height}")
 
         # Take a JPG picture
-        _, buffer = cv.imencode('.jpg', resized_frame)
+        _, buffer = cv.imencode('.jpg', resized_frame, [int(cv.IMWRITE_JPEG_QUALITY), quality])
         
         # Converting into encoded bytes
         jpg_as_text = base64.b64encode(buffer)
@@ -52,16 +55,16 @@ def on_message(cli, userdata, message):
 
     if message.topic == 'Connect':
         print ('connected')
-        client.subscribe('getValue')
-        client.subscribe('writeParameters')
+        #client.subscribe('getValue')
+        #client.subscribe('writeParameters')
         client.subscribe('StartVideoStream')
 
-    if message.topic == 'getValue':
+    '''if message.topic == 'getValue':
         print ('envio valor')
         client.publish('Value', 25)
     if message.topic == 'writeParameters':
         parameters = json.loads(message.payload.decode("utf-8"))
-        print (parameters)
+        print (parameters)'''
     if message.topic == 'StartVideoStream':
         print ('start video stream')
         client.subscribe('StopVideoStream')
