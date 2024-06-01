@@ -91,7 +91,7 @@ def DummyService ():
     cap = cv.VideoCapture(0)
     
     client = mqtt.Client(transport="websockets")
-    client.username_pw_set(username='dronsEETAC',password='mimara1456.')
+    client.username_pw_set(username='*********',password='**********')
     client.on_message = on_message
     client.on_connect = on_connect
     client.connect(broker_address, broker_port)
